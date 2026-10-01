@@ -10,7 +10,7 @@ The private pilot service, credentials, customer data, production identifiers, a
 
 Do not open a public issue for a suspected vulnerability or include personal data, group content, credentials, tokens, or production URLs in a report.
 
-Use [GitHub's private vulnerability reporting form](https://github.com/luisroquette/resuma/security/advisories/new) and include:
+Use [GitHub's private vulnerability reporting form](https://github.com/luisroquette-labs/resuma/security/advisories/new) and include:
 
 1. The affected public page or file.
 2. Reproduction steps using non-sensitive test data.
