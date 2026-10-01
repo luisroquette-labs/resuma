@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="https://luisroquette.github.io/resuma/">Live demo</a> ·
+  <a href="https://luisroquette-labs.github.io/resuma/">Live demo</a> ·
   <a href="docs/INSTALL.md">Install</a> ·
   <a href="product/STATUS.md">Product status</a> ·
   <a href="SECURITY.md">Security</a>
@@ -63,7 +63,7 @@ The repository never includes customer data, credentials, production group ident
 Requirements: Node.js 20 or newer and npm. Python 3 and Chromium are only needed for browser tests.
 
 ```bash
-git clone https://github.com/luisroquette/resuma.git
+git clone https://github.com/luisroquette-labs/resuma.git
 cd resuma
 npm ci
 npm run demo

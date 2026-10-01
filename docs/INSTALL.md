@@ -5,7 +5,7 @@ The public core is a deterministic TypeScript reference implementation. It does 
 ## 1. Clone and validate
 
 ```bash
-git clone https://github.com/luisroquette/resuma.git
+git clone https://github.com/luisroquette-labs/resuma.git
 cd resuma
 npm ci
 npm test
