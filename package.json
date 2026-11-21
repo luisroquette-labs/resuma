@@ -13,11 +13,16 @@
     "serve:docs": "python3 -m http.server 4174 --directory docs",
     "test": "npm run test:core && playwright test",
     "test:core": "npm run build && node --test dist/tests/core.test.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "node scripts/check-comments.mjs",
+    "preflight:ci": "npm run typecheck && npm run lint && npm test"
   },
   "devDependencies": {
     "@playwright/test": "1.62.1",
     "@types/node": "20.19.43",
-    "typescript": "5.9.3"
+    "css-tree": "^3.2.1",
+    "parse5": "^8.1.1",
+    "typescript": "5.9.3",
+    "yaml": "^2.9.1"
   }
 }
