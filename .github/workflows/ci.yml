@@ -33,5 +33,5 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Run core and browser tests
-        run: npm test
+      - name: Run canonical preflight
+        run: npm run preflight:ci
