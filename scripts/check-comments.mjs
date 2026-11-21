@@ -1,7 +1,9 @@
 import { execFileSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
+import { tokenize as tokenizeCss, tokenTypes as cssTokenTypes } from 'css-tree'
 import { parse } from 'parse5'
 import ts from 'typescript'
+import { Parser as YamlParser } from 'yaml'
 
 const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' }).split('\0').filter(Boolean)
 const failures = []
@@ -48,8 +50,27 @@ function commentPositions(file, source) {
     visit(parse(source, { sourceCodeLocationInfo: true }))
     return positions
   }
-  if (file.endsWith('.css')) return [...source.matchAll(/\/\*[\s\S]*?\*\//g)].map(m => m.index)
-  if (file === 'Dockerfile' || file === '.gitignore' || file === '.gitattributes' || file.endsWith('robots.txt') || file.endsWith('.yml') || file.endsWith('.yaml')) {
+  if (file.endsWith('.css')) {
+    const positions = []
+    tokenizeCss(source, (type, start) => {
+      if (type === cssTokenTypes.Comment) positions.push(start)
+    })
+    return positions
+  }
+  if (file.endsWith('.yml') || file.endsWith('.yaml')) {
+    const positions = []
+    function visit(token) {
+      if (!token || typeof token !== 'object') return
+      if (token.type === 'comment') positions.push(token.offset)
+      for (const value of Object.values(token)) {
+        if (Array.isArray(value)) value.forEach(visit)
+        else if (value && typeof value === 'object') visit(value)
+      }
+    }
+    for (const token of new YamlParser().parse(source)) visit(token)
+    return positions
+  }
+  if (file === 'Dockerfile' || file === '.gitignore' || file === '.gitattributes' || file.endsWith('robots.txt')) {
     return [...source.matchAll(/^[ \t]*#.*$/gm)].map(m => m.index)
   }
   return []
@@ -64,6 +85,8 @@ if (process.argv.includes('--self-test')) {
   if (commentPositions('fixture.html', '<script>const x=1; // real\n</script >').length !== 1) throw new Error('Spaced script end tag bypassed the lint')
   if (commentPositions('fixture.html', '<script>const x=1; // real\n</script\t\n bar>').length !== 1) throw new Error('Malformed script end tag bypassed the lint')
   if (commentPositions('fixture.svg', '<svg><!-- real --></svg>').length !== 1) throw new Error('SVG comment parsing failed')
+  if (commentPositions('fixture.css', '.x{content:"/* literal */"} /* real */').length !== 1) throw new Error('CSS strings confused the lint')
+  if (commentPositions('fixture.yml', 'run: npm test # real\n').length !== 1) throw new Error('Inline YAML comment bypassed the lint')
   console.log('Comment parser self-test passed')
 } else {
   for (const file of files) {
